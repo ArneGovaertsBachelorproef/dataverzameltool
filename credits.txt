@@ -1,0 +1,19 @@
+Deze datatool is ontwikkeld door:
+    Arne Govaerts <arne.govaerts@student.hogent.be>
+met de hulp van:
+    Sharon Van Hove <sharon.vanhove@hogent.be>: Promotor
+    Jorrit Campens <jorrit.campens@hogent.be>: Co-promotor
+
+Deze datatool maakt gebruik van het werk van:
+    Caleb Porzio: Alpine.js
+    Frank de Jonge: Flysystem
+    Nikita Popov: FastRoute
+    Scaleway: Object Storage
+    Combell: hosting en domeinnaam
+    Verschillende open source bijdragers
+
+De favicon is gegenereerd met behulp van de volgende afbeeldingen van Twitter Twemoji:
+    - Grafiek Titel: 1f9d0.svg
+    - Graphics Auteur: Copyright 2020 Twitter, Inc en andere bijdragers (https://github.com/twitter/twemoji)
+    - Grafische bron: https://github.com/twitter/twemoji/blob/master/assets/svg/1f9d0.svg
+    - Graphics Licentie: CC-BY 4.0 (https://creativecommons.org/licenses/by/4.0/)

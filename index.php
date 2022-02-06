@@ -12,7 +12,7 @@ date_default_timezone_set('Europe/Brussels');
 require 'vendor/autoload.php';
 
 $dotenv = new Dotenv();
-$dotenv->load(__DIR__.'/.env');
+$dotenv->load('../data/.env');
 
 $dispatcher = FastRoute\cachedDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'get_index');
