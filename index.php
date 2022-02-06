@@ -51,90 +51,97 @@ switch ($routeInfo[0]) {
             break;
             case 'post_index':
                 header('Content-Type: application/json; charset=utf-8');
-                if(isset($_POST['geslacht'])) {
-                    if(isset($_POST['leeftijd'])) {
-                        if(isset($_POST['professioneel'])) {
-                            // audio bestanden uploaden naar Scaleway Object
-                            $client = new S3Client([
-                                'credentials'               => [
-                                    'key'                       => $_ENV['S3_KEY'],
-                                    'secret'                    => $_ENV['S3_SECRET'],
-                                ],
-                                'region'                    => $_ENV['S3_REGION'],
-                                'version'                   => $_ENV['S3_VERSION'],
-                                'endpoint'                  => $_ENV['S3_ENDPOINT'],
-                            ]);
-                            
-                            $adapter = new AwsS3V3Adapter($client, $_ENV['S3_BUCKET']);
-                            //$adapter = new LocalFilesystemAdapter(__DIR__.'/_files');
-                            $filesystem = new Filesystem($adapter);
-
-                            $stream = fopen($_FILES['leeftijdsgenootOpname']['tmp_name'], 'r+');
-                            $filesystem->writeStream(
-                                $_FILES['leeftijdsgenootOpname']['name'],
-                                $stream
-                            );
-                            if (is_resource($stream)) {
-                                fclose($stream);
-                            }
-
-                            $stream = fopen($_FILES['oudereOpname']['tmp_name'], 'r+');
-                            $filesystem->writeStream(
-                                $_FILES['oudereOpname']['name'],
-                                $stream
-                            );
-                            if (is_resource($stream)) {
-                                fclose($stream);
-                            }
-
-                            // data wegschrijven in csv
-                            $line = [
-                                date('c'),
-                                filter_input(INPUT_POST, 'deelnemer', FILTER_SANITIZE_STRING),
-                                filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),
-                                filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),
-                                filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),
-                                $_FILES['leeftijdsgenootOpname']['name'],
-                                $_FILES['oudereOpname']['name'],
-                                filter_input(INPUT_POST, 'browser', FILTER_SANITIZE_STRING),
-                                filter_input(INPUT_POST, 'os', FILTER_SANITIZE_STRING),
-                                filter_input(INPUT_POST, 'platform', FILTER_SANITIZE_STRING),
-                            ];
-                            
-                            $csv_file = '../data/_dataverza.csv';
-                            if(!file_exists($csv_file)) {
-                                $out = fopen($csv_file, 'a');
-                                fputcsv($out, [
-                                    'datum',
-                                    'deelnemer',
-                                    'geslacht',
-                                    'leeftijd',
-                                    'professioneel',
-                                    'leeftijdsgenoot_opname',
-                                    'oudere_opname',
-                                    'browser',
-                                    'os',
-                                    'platform',
-                                ], ';');
+                if(isset($_POST['moedertaal'])) {
+                    if(isset($_POST['geslacht'])) {
+                        if(isset($_POST['leeftijd'])) {
+                            if(isset($_POST['professioneel'])) {
+                                // audio bestanden uploaden naar Scaleway Object
+                                $client = new S3Client([
+                                    'credentials'               => [
+                                        'key'                       => $_ENV['S3_KEY'],
+                                        'secret'                    => $_ENV['S3_SECRET'],
+                                    ],
+                                    'region'                    => $_ENV['S3_REGION'],
+                                    'version'                   => $_ENV['S3_VERSION'],
+                                    'endpoint'                  => $_ENV['S3_ENDPOINT'],
+                                ]);
+                                
+                                $adapter = new AwsS3V3Adapter($client, $_ENV['S3_BUCKET']);
+                                //$adapter = new LocalFilesystemAdapter(__DIR__.'/_files');
+                                $filesystem = new Filesystem($adapter);
+    
+                                $stream = fopen($_FILES['leeftijdsgenootOpname']['tmp_name'], 'r+');
+                                $filesystem->writeStream(
+                                    $_FILES['leeftijdsgenootOpname']['name'],
+                                    $stream
+                                );
+                                if (is_resource($stream)) {
+                                    fclose($stream);
+                                }
+    
+                                $stream = fopen($_FILES['oudereOpname']['tmp_name'], 'r+');
+                                $filesystem->writeStream(
+                                    $_FILES['oudereOpname']['name'],
+                                    $stream
+                                );
+                                if (is_resource($stream)) {
+                                    fclose($stream);
+                                }
+    
+                                // data wegschrijven in csv
+                                $line = [
+                                    date('c'),
+                                    filter_input(INPUT_POST, 'deelnemer', FILTER_SANITIZE_STRING),
+                                    filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),
+                                    filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),
+                                    filter_input(INPUT_POST, 'moedertaal', FILTER_SANITIZE_STRING),
+                                    filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),
+                                    $_FILES['leeftijdsgenootOpname']['name'],
+                                    $_FILES['oudereOpname']['name'],
+                                    filter_input(INPUT_POST, 'browser', FILTER_SANITIZE_STRING),
+                                    filter_input(INPUT_POST, 'os', FILTER_SANITIZE_STRING),
+                                    filter_input(INPUT_POST, 'platform', FILTER_SANITIZE_STRING),
+                                ];
+                                
+                                $csv_file = '../data/_dataverza.csv';
+                                if(!file_exists($csv_file)) {
+                                    $out = fopen($csv_file, 'a');
+                                    fputcsv($out, [
+                                        'datum',
+                                        'deelnemer',
+                                        'geslacht',
+                                        'leeftijd',
+                                        'moedertaal',
+                                        'professioneel',
+                                        'leeftijdsgenoot_opname',
+                                        'oudere_opname',
+                                        'browser',
+                                        'os',
+                                        'platform',
+                                    ], ';');
+                                } else {
+                                    $out = fopen($csv_file, 'a');
+                                }
+                                fputcsv($out, $line, ';');
+                                fclose($out);
+    
+                                http_response_code(201);
+                                echo json_encode(['okay' => true]);
                             } else {
-                                $out = fopen($csv_file, 'a');
+                                http_response_code(400);
+                                echo json_encode(['okay' => false, msg => 'professioneel_missing']);
                             }
-                            fputcsv($out, $line, ';');
-                            fclose($out);
-
-                            http_response_code(201);
-                            echo json_encode(['okay' => true]);
                         } else {
                             http_response_code(400);
-                            echo json_encode(['okay' => false, msg => 'professioneel_missing']);
+                            echo json_encode(['okay' => false, msg => 'leeftijd_missing']);
                         }
                     } else {
                         http_response_code(400);
-                        echo json_encode(['okay' => false, msg => 'leeftijd_missing']);
+                        echo json_encode(['okay' => false, msg => 'geslacht_missing']);
                     }
                 } else {
                     http_response_code(400);
-                    echo json_encode(['okay' => false, msg => 'geslacht_missing']);
+                    echo json_encode(['okay' => false, msg => 'moedertaal_missing']);
                 }
             break;
         }

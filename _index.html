@@ -59,6 +59,7 @@
 <body x-data="{
     tonen: 0,
     stat: {
+        moedertaal: 'nl',
         geslacht: '',
         leeftijd:  0,
         professioneel: -1,
@@ -84,6 +85,7 @@
 
             fd.append('deelnemer', deelnemer.visitorId);
 
+            fd.append('moedertaal', this.stat.moedertaal);
             fd.append('geslacht', this.stat.geslacht);
             fd.append('leeftijd', this.stat.leeftijd);
             fd.append('professioneel', this.stat.professioneel);
@@ -111,8 +113,9 @@
         });
     },
     resp: false,
-    okay: false
-}">
+    okay: false,
+    talen: {},
+}" x-init="fetch('talen.json').then(r => r.json()).then(r => talen = r)">
     <header>
         <h1>Naar zee met ...</h1>
     </header>
@@ -174,6 +177,19 @@
                 </label>
                 <label for="leeftijd">Wat is je leeftijd?</label>
                 <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" required x-model.number="stat.leeftijd">
+                <label for="moedertaal">Wat is je moedertaal?</label>
+                <select required x-model="stat.moedertaal">
+                    <option value="nl">Nederlands</option>
+                    <option value="fr">Frans</option>
+                    <option value="de">Duits</option>
+                    <option value="es">Spaans</option>
+                    <option value="it">Italiaans</option>
+                    <option value="de">Arabisch</option>
+                    <option value="pl">Pools</option>
+                    <option value="tr">Turks</option>
+                    <option value="en">Engels</option>
+                    <option value="andere">Andere</option>
+                </select>
                 <label>Bent u professioneel bezig met patiënten of zorgbehoevenden?</label>
                 <label>
                     <input type="radio" name="professioneel" value="J" required>
