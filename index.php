@@ -90,7 +90,7 @@ switch ($routeInfo[0]) {
                                 filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),        // $_POST['geslacht']
                                 filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),                  // $_POST['leeftijd'],
                                 filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),   // $_POST['professioneel'],
-                                $_FILES['oudereOpname']['name'],
+                                $_FILES['leeftijdsgenootOpname']['name'],
                                 $_FILES['oudereOpname']['name']
                             ];
                             $out = fopen('../data/_dataverza.csv', 'a');
