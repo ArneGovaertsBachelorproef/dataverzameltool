@@ -6,6 +6,8 @@ use Symfony\Component\Dotenv\Dotenv;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 
+date_default_timezone_set('Europe/Brussels');
+
 require 'vendor/autoload.php';
 
 $dotenv = new Dotenv();
@@ -51,13 +53,13 @@ switch ($routeInfo[0]) {
                         if(isset($_POST['professioneel'])) {
                             // audio bestanden uploaden naar Scaleway Object
                             $client = new S3Client([
-                                'credentials' => [
-                                    'key'    => $_ENV['S3_KEY'],
-                                    'secret' => $_ENV['S3_SECRET'],
+                                'credentials'               => [
+                                    'key'                       => $_ENV['S3_KEY'],
+                                    'secret'                    => $_ENV['S3_SECRET'],
                                 ],
-                                'region' => $_ENV['S3_REGION'],
-                                'version' => $ENV['S3_VERSION'],
-                                'endpoint' => $_ENV['S3_ENDPOINT'],
+                                'region'                    => $_ENV['S3_REGION'],
+                                'version'                   => $_ENV['S3_VERSION'],
+                                'endpoint'                  => $_ENV['S3_ENDPOINT'],
                             ]);
                             
                             $adapter = new AwsS3V3Adapter($client, $_ENV['S3_BUCKET']);
