@@ -14,6 +14,7 @@
         footer > a > img {
             max-width: 25%;
         }
+        [x-cloak] { display: none !important; }
     </style>
 </head>
 
@@ -22,27 +23,41 @@
     stat: {
         geslacht: '',
         leeftijd:  0,
-        professioneel: false,
-        leeftijdsgenootOpname: null,
-        oudereOpname: null,
+        professioneel: -1,
+        leeftijdsgenootOpname: {
+            audio: null,
+            okay: false
+        },
+        oudereOpname: {
+            audio: null,
+            okay: false
+        },
     },
     recorder: null,
     opnemen: false,
     indienen: function() {
         const fd = new FormData();
-        fd.append('geslacht', geslacht);
-        fd.append('leeftijd', leeftijd);
-        fd.append('professioneel', professioneel);
-        fd.append('leeftijdsgenootOpname', leeftijdsgenootOpname.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
-        fd.append('oudereOpname', oudereOpname.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
+        fd.append('geslacht', this.stat.geslacht);
+        fd.append('leeftijd', this.stat.leeftijd);
+        fd.append('professioneel', this.stat.professioneel);
+        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
+        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
 
         fetch('/', {
             method: 'POST',
             body: fd,
         })
         .then(r => r.json())
-        .then(r => okay = r.okay)
+        .then(r => {
+            this.okay = r.okay;
+            this.resp = true;
+        })
+        .catch(() => {
+            this.okay = false;
+            this.resp = true;
+        });
     },
+    resp: false,
     okay: false
 }">
     <header>
@@ -69,7 +84,7 @@
                 Beginnen
             </button>
         </article>
-        <article x-show="tonen === 1">
+        <article x-cloak x-show="tonen === 1">
             <p>
                 Op deze pagina wordt gevraagd naar enkele statistische gegevens om een globaal beeld te schetsen.
             </p>
@@ -77,7 +92,6 @@
                 tonen               = 2;
                 let fd              = new FormData($event.target);
                 stat.geslacht       = fd.get('geslacht');
-                stat.leeftijd       = fd.get('leeftijd');
                 stat.professioneel  = fd.get('professioneel');
             ">
                 <label>Wat is je geslacht?</label>
@@ -94,7 +108,7 @@
                     Andere
                 </label>
                 <label for="leeftijd">Wat is je leeftijd?</label>
-                <input type="number" min="0" max="120" step="1" id="leeftijd" name="leeftijd" required>
+                <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" required x-model.number="stat.leeftijd">
                 <label>Bent u professioneel bezig met zorgbehoevenden?</label>
                 <label>
                     <input type="radio" name="professioneel" value="Ja" required>
@@ -105,10 +119,10 @@
                     Neen
                 </label>
                 <p></p>
-                <input type="submit" value="Volgende">
+                <input type="submit" value="Volgende" :disabled="stat.leeftijd === 0">
             </form>
         </article>
-        <article x-show="tonen === 2">
+        <article x-cloak x-show="tonen === 2">
             <p>
                 Nu krijgt u twee scenario's. Bij elk van deze scenario's neemt u telkens een kort
                 geluidsfragment op. Je kan twee keer opnieuw proberen.
@@ -128,22 +142,22 @@
             </p>
 
             <button @click="recorder = await recordAudio(); recorder.start(); opnemen = true;">Start</button>
-            <button @click="stat.leeftijdsgenootOpname = await recorder.stop();  opnemen = false;">Stop</button>
+            <button @click="stat.leeftijdsgenootOpname.audio = await recorder.stop();  opnemen = false; stat.leeftijdsgenootOpname.okay = true">Stop</button>
             <template x-if="opnemen">
                 <small><i>
                     Opnemen...
                 </i></small>
             </template>
-            <template x-if="stat.leeftijdsgenootOpname !== null">
+            <template x-if="stat.leeftijdsgenootOpname.audio !== null">
                 <div>
                     <p></p>
-                    <audio :src="stat.leeftijdsgenootOpname.audioUrl" controls></audio>
+                    <audio :src="stat.leeftijdsgenootOpname.audio.audioUrl" controls></audio>
                 </div>
             </template>
             <p></p>
-            <button @click="tonen = 3">Volgende</button>
+            <button @click="tonen = 3" :disabled="!stat.leeftijdsgenootOpname.okay">Volgende</button>
         </article>
-        <article x-show="tonen === 3">
+        <article x-cloak x-show="tonen === 3">
             <h2>
                 Scenario 2: Grootouder
             </h2>
@@ -161,26 +175,29 @@
                 Communiceer bewust op betuttelende manier.
             </p>
             <button @click="recorder = await recordAudio(); recorder.start(); opnemen = true;">Start</button>
-            <button @click="stat.oudereOpname = await recorder.stop();  opnemen = false;">Stop</button>
+            <button @click="stat.oudereOpname.audio = await recorder.stop();  opnemen = false; stat.oudereOpname.okay = true;">Stop</button>
             <template x-if="opnemen">
                 <small><i>
                     Opnemen...
                 </i></small>
             </template>
-            <template x-if="stat.oudereOpname !== null">
+            <template x-if="stat.oudereOpname.audio !== null">
                 <div>
                     <p></p>
-                    <audio :src="stat.oudereOpname.audioUrl" controls></audio>
+                    <audio :src="stat.oudereOpname.audio.audioUrl" controls></audio>
                 </div>
             </template>
             <p></p>
-            <button @click="tonen = 4; indienen()">Indienen</button>
+            <button @click="tonen = 4; indienen()" :disabled="!stat.oudereOpname.okay">Indienen</button>
         </article>
-        <article x-show="tonen === 4">
-            <p x-if="okay">
+        <article x-cloak x-show="tonen === 4">
+            <p x-show="!resp">
+                Aan het verzenden...
+            </p>
+            <p x-show="resp && okay">
                 Uw inzending is goed geregistreerd. Nogmaals bedankt om deel te nemen.
             </p>
-            <p x-if="!okay">
+            <p x-show="resp && !okay">
                 Er liep iets mis bij het indienen. Herlaad eventueel de pagina en probeer nogmaals.
             </p>
         </article>
@@ -189,7 +206,6 @@
         <a href="https://www.hogent.be">
             <img src="HOGENT_Logo_Pos_rgb.png" alt="HOGENT">
         </a>
-        <p x-text="JSON.stringify(stat)"></p>
     </footer>
 
     <script src="recorder.js"></script>
