@@ -41,8 +41,8 @@
         fd.append('geslacht', this.stat.geslacht);
         fd.append('leeftijd', this.stat.leeftijd);
         fd.append('professioneel', this.stat.professioneel);
-        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.ogg');
-        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.ogg');
+        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.flac');
+        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.flac');
 
         fetch('/', {
             method: 'POST',
