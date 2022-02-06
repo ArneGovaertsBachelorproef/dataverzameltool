@@ -100,8 +100,26 @@ switch ($routeInfo[0]) {
                                 filter_input(INPUT_POST, 'os', FILTER_SANITIZE_STRING),
                                 filter_input(INPUT_POST, 'platform', FILTER_SANITIZE_STRING),
                             ];
-                            $out = fopen('../data/_dataverza.csv', 'a');
-                            fputcsv($out, $line);
+                            
+                            $csv_file = '../data/_dataverza.csv';
+                            if(!file_exists($csv_file)) {
+                                $out = fopen($csv_file, 'a');
+                                fputcsv($out, [
+                                    'datum',
+                                    'deelnemer',
+                                    'geslacht',
+                                    'leeftijd',
+                                    'professioneel',
+                                    'leeftijdsgenoot_opname',
+                                    'oudere_opname',
+                                    'browser',
+                                    'os',
+                                    'platform',
+                                ], ';');
+                            } else {
+                                $out = fopen($csv_file, 'a');
+                            }
+                            fputcsv($out, $line, ';');
                             fclose($out);
 
                             http_response_code(201);
