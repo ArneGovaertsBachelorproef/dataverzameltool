@@ -85,8 +85,15 @@ switch ($routeInfo[0]) {
                             }
 
                             // data wegschrijven in csv
-                            $line = [date('c'), $_POST['geslacht'], $_POST['leeftijd'], $_POST['professioneel'], 'normaal_file', 'oudere_file'];
-                            $out = fopen('_dataverza.csv', 'a');
+                            $line = [
+                                date('c'),
+                                filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),        // $_POST['geslacht']
+                                filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),                  // $_POST['leeftijd'],
+                                filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),   // $_POST['professioneel'],
+                                $_FILES['oudereOpname']['name'],
+                                $_FILES['oudereOpname']['name']
+                            ];
+                            $out = fopen('../data/_dataverza.csv', 'a');
                             fputcsv($out, $line);
                             fclose($out);
 

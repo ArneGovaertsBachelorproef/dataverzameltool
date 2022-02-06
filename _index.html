@@ -36,12 +36,13 @@
     recorder: null,
     opnemen: false,
     indienen: function() {
+        const rstr = (Math.random() + 1).toString(36).substring(7);
         const fd = new FormData();
         fd.append('geslacht', this.stat.geslacht);
         fd.append('leeftijd', this.stat.leeftijd);
         fd.append('professioneel', this.stat.professioneel);
-        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
-        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + (Math.random() + 1).toString(36).substring(7) + '.ogg');
+        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.ogg');
+        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.ogg');
 
         fetch('/', {
             method: 'POST',
@@ -96,26 +97,26 @@
             ">
                 <label>Wat is je geslacht?</label>
                 <label>
-                    <input type="radio" name="geslacht" value="Man" required>
+                    <input type="radio" name="geslacht" value="M" required>
                     Man
                 </label>
                 <label>
-                    <input type="radio" name="geslacht" value="Vrouw">
+                    <input type="radio" name="geslacht" value="V">
                     Vrouw
                 </label>
                 <label>
-                    <input type="radio" name="geslacht" value="Andere">
+                    <input type="radio" name="geslacht" value="X">
                     Andere
                 </label>
                 <label for="leeftijd">Wat is je leeftijd?</label>
                 <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" required x-model.number="stat.leeftijd">
                 <label>Bent u professioneel bezig met zorgbehoevenden?</label>
                 <label>
-                    <input type="radio" name="professioneel" value="Ja" required>
+                    <input type="radio" name="professioneel" value="J" required>
                     Ja
                 </label>
                 <label>
-                    <input type="radio" name="professioneel" value="Neen">
+                    <input type="radio" name="professioneel" value="N">
                     Neen
                 </label>
                 <p></p>
@@ -206,6 +207,7 @@
         <a href="https://www.hogent.be">
             <img src="HOGENT_Logo_Pos_rgb.png" alt="HOGENT">
         </a>
+        <a href="mailto:bachelorproef@arnegovaerts.be"bachelorproef@arnegovaerts.be></a>
     </footer>
 
     <script src="recorder.js"></script>
