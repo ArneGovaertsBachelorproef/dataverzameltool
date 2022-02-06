@@ -2,7 +2,15 @@
     font-family: 'Montserrat', 'Arial', sans-serif !important;
 }
 
+#ie {
+    color: #d00000;
+    display: none;
+}
+
 footer > a > img {
     max-width: 25%;
 }
-[x-cloak] { display: none !important; }
+
+[x-cloak] {
+    display: none !important;
+}
