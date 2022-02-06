@@ -7,15 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Naar zee</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm.min.css">
+    <link rel="stylesheet" href="style.css">
+    
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <style>
-        footer > a > img {
-            max-width: 25%;
-        }
-        [x-cloak] { display: none !important; }
-    </style>
 </head>
 
 <body x-data="{
@@ -36,26 +35,40 @@
     recorder: null,
     opnemen: false,
     indienen: function() {
-        const rstr = (Math.random() + 1).toString(36).substring(7);
-        const fd = new FormData();
-        fd.append('geslacht', this.stat.geslacht);
-        fd.append('leeftijd', this.stat.leeftijd);
-        fd.append('professioneel', this.stat.professioneel);
-        fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.flac');
-        fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + rstr + '.flac');
+        import('https://openfpcdn.io/fingerprintjs/v3.3.2/esm.min.js')
+        .then(FingerprintJS => FingerprintJS.load())
+        .then(fp => fp.get())
+        .then(deelnemer => {
+            const bowser = window.bowser.getParser(window.navigator.userAgent);
 
-        fetch('/', {
-            method: 'POST',
-            body: fd,
-        })
-        .then(r => r.json())
-        .then(r => {
-            this.okay = r.okay;
-            this.resp = true;
-        })
-        .catch(() => {
-            this.okay = false;
-            this.resp = true;
+            const fd = new FormData();
+
+            fd.append('deelnemer', deelnemer.visitorId);
+
+            fd.append('geslacht', this.stat.geslacht);
+            fd.append('leeftijd', this.stat.leeftijd);
+            fd.append('professioneel', this.stat.professioneel);
+
+            fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
+            fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
+
+            fd.append('browser', bowser.getBrowserName() + ' ' + bowser.getBrowserVersion());
+            fd.append('os', bowser.getOSName() + ' ' + bowser.getOSVersion());
+            fd.append('platform', bowser.getPlatformType());
+            
+            fetch('/', {
+                method: 'POST',
+                body: fd,
+            })
+            .then(r => r.json())
+            .then(r => {
+                this.okay = r.okay;
+                this.resp = true;
+            })
+            .catch(() => {
+                this.okay = false;
+                this.resp = true;
+            });
         });
     },
     resp: false,
@@ -110,7 +123,7 @@
                 </label>
                 <label for="leeftijd">Wat is je leeftijd?</label>
                 <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" required x-model.number="stat.leeftijd">
-                <label>Bent u professioneel bezig met zorgbehoevenden?</label>
+                <label>Bent u professioneel bezig met patiënten of zorgbehoevenden?</label>
                 <label>
                     <input type="radio" name="professioneel" value="J" required>
                     Ja
@@ -211,6 +224,7 @@
         <a href="mailto:bachelorproef@arnegovaerts.be">bachelorproef@arnegovaerts.be</a>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5.min.js"></script>
     <script src="recorder.js"></script>
 </body>
 

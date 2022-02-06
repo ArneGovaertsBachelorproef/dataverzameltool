@@ -1,6 +1,7 @@
 <?php
 
 use Aws\S3\S3Client;
+use FastRoute\Dispatcher;
 use League\Flysystem\Filesystem;
 use Symfony\Component\Dotenv\Dotenv;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
@@ -13,10 +14,12 @@ require 'vendor/autoload.php';
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
+$dispatcher = FastRoute\cachedDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', 'get_index');
     $r->addRoute('POST', '/', 'post_index');
-});
+}, [
+    'cacheFile' => __DIR__ . '/route.cache'
+]);
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
@@ -28,24 +31,24 @@ $uri = rawurldecode($uri);
 
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
-    case FastRoute\Dispatcher::NOT_FOUND:
+    case Dispatcher::NOT_FOUND:
         http_response_code(404);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['okay' => false, msg => 'not_found']);
-        break;
-    case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+    break;
+    case Dispatcher::METHOD_NOT_ALLOWED:
         $allowedMethods = $routeInfo[1];
         http_response_code(405);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode(['okay' => false, msg => 'method_not_allowed']);
-        break;
-    case FastRoute\Dispatcher::FOUND:
+    break;
+    case Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars = $routeInfo[2];
         switch ($handler) {
             case 'get_index':
                 echo file_get_contents('_index.html');
-                break;
+            break;
             case 'post_index':
                 header('Content-Type: application/json; charset=utf-8');
                 if(isset($_POST['geslacht'])) {
@@ -87,11 +90,15 @@ switch ($routeInfo[0]) {
                             // data wegschrijven in csv
                             $line = [
                                 date('c'),
-                                filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),        // $_POST['geslacht']
-                                filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),                  // $_POST['leeftijd'],
-                                filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),   // $_POST['professioneel'],
+                                filter_input(INPUT_POST, 'deelnemer', FILTER_SANITIZE_STRING),
+                                filter_input(INPUT_POST, 'geslacht', FILTER_SANITIZE_STRING),
+                                filter_input(INPUT_POST, 'leeftijd', FILTER_VALIDATE_INT),
+                                filter_input(INPUT_POST, 'professioneel', FILTER_SANITIZE_STRING),
                                 $_FILES['leeftijdsgenootOpname']['name'],
-                                $_FILES['oudereOpname']['name']
+                                $_FILES['oudereOpname']['name'],
+                                filter_input(INPUT_POST, 'browser', FILTER_SANITIZE_STRING),
+                                filter_input(INPUT_POST, 'os', FILTER_SANITIZE_STRING),
+                                filter_input(INPUT_POST, 'platform', FILTER_SANITIZE_STRING),
                             ];
                             $out = fopen('../data/_dataverza.csv', 'a');
                             fputcsv($out, $line);
@@ -111,7 +118,7 @@ switch ($routeInfo[0]) {
                     http_response_code(400);
                     echo json_encode(['okay' => false, msg => 'geslacht_missing']);
                 }
-                
+            break;
         }
-        break;
+    break;
 }
