@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naar zee met ...</title>
+    <title>Datacollectie Bachelorproef: Naar zee met...</title>
 
     <link rel="credits" href="/credits.txt">
 
     <link rel="canonical" href="https://arnegovaerts.be">
-    <meta name="description" content="Naar zee met ... is een datatool die gebruikt wordt als deel van een bachelorproef toegepaste informatica.">
+    <meta name="description" content="Datacollectie Bachelorproef: Naar zee met... is een datatool die gebruikt wordt als deel van een bachelorproef toegepaste informatica.">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@argovaerts">
     <meta name="twitter:url" property="og:url" content="https://arnegovaerts.be">
-    <meta name="twitter:title" property="og:title" content="Naar zee met ...">
-    <meta name="twitter:description" property="og:description" content="Naar zee met ... is een datatool die gebruikt wordt als deel van een bachelorproef toegepaste informatica.">
+    <meta name="twitter:title" property="og:title" content="Datacollectie Bachelorproef: Naar zee met...">
+    <meta name="twitter:description" property="og:description" content="Datacollectie Bachelorproef: Naar zee met... is een datatool die gebruikt wordt als deel van een bachelorproef toegepaste informatica.">
     <meta name="twitter:image" property="og:image" content="https://arnegovaerts.be/HOGENT_Logo_Pos_rgb.png">
     <script type="application/ld+json">
     {
@@ -25,7 +25,7 @@
         "@type": "WebPage",
         "@id": "https://arnegovaerts.be"
       },
-      "headline": "Naar zee met ...",
+      "headline": "Datacollectie Bachelorproef",
       "description": "Bachelorproef HOGENT",
       "image": "https://arnegovaerts.be/HOGENT_Logo_Pos_rgb.png",  
       "author": {
@@ -42,7 +42,7 @@
         }
       },
       "datePublished": "2022-02-06",
-      "dateModified": "2022-02-06"
+      "dateModified": "2022-02-07"
     }
     </script>   
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -62,12 +62,13 @@
         moedertaal: 'nl',
         geslacht: '',
         leeftijd:  0,
-        professioneel: -1,
-        leeftijdsgenootOpname: {
+        student_zorg: -1,
+        werk_zorg: -1,
+        leeftijdsgenoot_opname: {
             audio: null,
             okay: false
         },
-        oudereOpname: {
+        oudere_opname: {
             audio: null,
             okay: false
         },
@@ -88,10 +89,11 @@
             fd.append('moedertaal', this.stat.moedertaal);
             fd.append('geslacht', this.stat.geslacht);
             fd.append('leeftijd', this.stat.leeftijd);
-            fd.append('professioneel', this.stat.professioneel);
+            fd.append('student_zorg', this.stat.student_zorg);
+            fd.append('werk_zorg', this.stat.werk_zorg);
 
-            fd.append('leeftijdsgenootOpname', this.stat.leeftijdsgenootOpname.audio.audioBlob, 'leeftijdsgenootOpname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
-            fd.append('oudereOpname', this.stat.oudereOpname.audio.audioBlob, 'oudereOpname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
+            fd.append('leeftijdsgenoot_opname', this.stat.leeftijdsgenoot_opname.audio.audioBlob, 'leeftijdsgenoot_opname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
+            fd.append('oudere_opname', this.stat.oudere_opname.audio.audioBlob, 'oudere_opname_' + new Date().toISOString().split('T')[0] + '_' + deelnemer.visitorId + '.flac');
 
             fd.append('browser', bowser.getBrowserName() + ' ' + bowser.getBrowserVersion());
             fd.append('os', bowser.getOSName() + ' ' + bowser.getOSVersion());
@@ -115,20 +117,23 @@
     resp: false,
     okay: false,
     talen: {},
-}" x-init="fetch('talen.json').then(r => r.json()).then(r => talen = r)">
+}">
     <header>
-        <h1>Naar zee met ...</h1>
+        <h1>
+            Datacollectie Bachelorproef:<br>
+            Naar zee met...
+        </h1>
     </header>
     <main>
         <noscript>
             <p>
-                Jammer genoeg werkt deze website enkel als met JavaScript aan. Sorry.
+                Jammer genoeg werkt deze website enkel met JavaScript aan. Mijn excuses.
             </p>
             <p></p>
         </noscript>
         <article id="ie">
             <p>
-                Jammer genoeg werkt deze website enkel een modere browser (bijvoorbeeld Firefox of Chrome). Sorry.
+                Jammer genoeg werkt deze website enkel in een moderne browser (bijvoorbeeld Firefox of Chrome). Mijn excuses.
             </p>
             <p></p>
         </article>
@@ -146,7 +151,8 @@
                 Alvast bedankt!
             </p>
             <p>
-                &mdash; Arne Govaerts
+                &mdash; Arne Govaerts<br>
+                <small><i>Laatstejaarsstudent Toegepaste Informatica</i></small>
             </p>
             <button @click="tonen = 1">
                 Beginnen
@@ -156,29 +162,30 @@
             <p>
                 Op deze pagina wordt gevraagd naar enkele statistische gegevens om een globaal beeld te schetsen.
             </p>
-            <form @submit.prevent="
-                tonen               = 2;
-                let fd              = new FormData($event.target);
-                stat.geslacht       = fd.get('geslacht');
-                stat.professioneel  = fd.get('professioneel');
-            ">
-                <label>Wat is je geslacht?</label>
+            <form @submit.prevent="tonen = 2">
                 <label>
-                    <input type="radio" name="geslacht" value="M" required>
+                    Wat is je geslacht?
+                </label>
+                <label>
+                    <input type="radio" value="M" x-model="stat.geslacht" required>
                     Man
                 </label>
                 <label>
-                    <input type="radio" name="geslacht" value="V">
+                    <input type="radio" value="V" x-model="stat.geslacht">
                     Vrouw
                 </label>
                 <label>
-                    <input type="radio" name="geslacht" value="X">
+                    <input type="radio" value="X" x-model="stat.geslacht">
                     Andere
                 </label>
-                <label for="leeftijd">Wat is je leeftijd?</label>
-                <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" required x-model.number="stat.leeftijd">
-                <label for="moedertaal">Wat is je moedertaal?</label>
-                <select required x-model="stat.moedertaal">
+                <label for="leeftijd">
+                    Wat is je leeftijd?
+                </label>
+                <input type="number" min="0" step="1" id="leeftijd" name="leeftijd" x-model.number="stat.leeftijd" required>
+                <label for="moedertaal">
+                    Wat is je moedertaal?
+                </label>
+                <select x-model="stat.moedertaal" required>
                     <option value="nl">Nederlands</option>
                     <option value="fr">Frans</option>
                     <option value="de">Duits</option>
@@ -190,23 +197,36 @@
                     <option value="en">Engels</option>
                     <option value="andere">Andere</option>
                 </select>
-                <label>Bent u professioneel bezig met patiënten of zorgbehoevenden?</label>
                 <label>
-                    <input type="radio" name="professioneel" value="J" required>
+                    Studeert u op heden een richting die verband houdt met de zorg- en welzijnssector?
+                </label>
+                <label>
+                    <input type="radio" value="J" x-model="stat.student_zorg" required>
                     Ja
                 </label>
                 <label>
-                    <input type="radio" name="professioneel" value="N">
+                    <input type="radio" value="N" x-model="stat.student_zorg">
+                    Neen
+                </label>
+                <label>
+                    Bent u op heden werkzaam in de zorg- en welzijnssector (stage, vakantie- en weekendwerk niet meegerekend)?
+                </label>
+                <label>
+                    <input type="radio" value="J" x-model="stat.werk_zorg" required>
+                    Ja
+                </label>
+                <label>
+                    <input type="radio" value="N" x-model="stat.werk_zorg">
                     Neen
                 </label>
                 <p></p>
-                <input type="submit" value="Volgende" :disabled="stat.leeftijd === 0">
+                <input type="submit" value="Volgende" :disabled="stat.geslacht === '' || stat.leeftijd === 0 || stat.student_zorg === -1 || stat.werk_zorg === -1">
             </form>
         </article>
         <article x-cloak x-show="tonen === 2">
             <p>
                 Nu krijgt u twee scenario's. Bij elk van deze scenario's neemt u telkens een kort
-                geluidsfragment op. Je kan twee keer opnieuw proberen.
+                geluidsfragment op. Dit mag een fictieve boodschap zijn.
             </p>
             <h2>
                 Scenario 1: Leeftijdsgenoot
@@ -223,20 +243,20 @@
             </p>
 
             <button @click="recorder = await recordAudio(); recorder.start(); opnemen = true;">Start</button>
-            <button @click="stat.leeftijdsgenootOpname.audio = await recorder.stop();  opnemen = false; stat.leeftijdsgenootOpname.okay = true">Stop</button>
+            <button @click="stat.leeftijdsgenoot_opname.audio = await recorder.stop(); opnemen = false; stat.leeftijdsgenoot_opname.okay = true">Stop</button>
             <template x-if="opnemen">
                 <small><i>
                     Opnemen...
                 </i></small>
             </template>
-            <template x-if="stat.leeftijdsgenootOpname.audio !== null">
+            <template x-if="stat.leeftijdsgenoot_opname.audio !== null">
                 <div>
                     <p></p>
-                    <audio :src="stat.leeftijdsgenootOpname.audio.audioUrl" controls></audio>
+                    <audio :src="stat.leeftijdsgenoot_opname.audio.audioUrl" controls></audio>
                 </div>
             </template>
             <p></p>
-            <button @click="tonen = 3" :disabled="!stat.leeftijdsgenootOpname.okay">Volgende</button>
+            <button @click="tonen = 3" :disabled="!stat.leeftijdsgenoot_opname.okay">Volgende</button>
         </article>
         <article x-cloak x-show="tonen === 3">
             <h2>
@@ -253,27 +273,27 @@
                 graag wil doen, enz.
             </p>
             <p>
-                Communiceer bewust op betuttelende manier.
+                <b>Communiceer bewust op betuttelende manier.</b>
             </p>
             <button @click="recorder = await recordAudio(); recorder.start(); opnemen = true;">Start</button>
-            <button @click="stat.oudereOpname.audio = await recorder.stop();  opnemen = false; stat.oudereOpname.okay = true;">Stop</button>
+            <button @click="stat.oudere_opname.audio = await recorder.stop();  opnemen = false; stat.oudere_opname.okay = true;">Stop</button>
             <template x-if="opnemen">
                 <small><i>
                     Opnemen...
                 </i></small>
             </template>
-            <template x-if="stat.oudereOpname.audio !== null">
+            <template x-if="stat.oudere_opname.audio !== null">
                 <div>
                     <p></p>
-                    <audio :src="stat.oudereOpname.audio.audioUrl" controls></audio>
+                    <audio :src="stat.oudere_opname.audio.audioUrl" controls></audio>
                 </div>
             </template>
             <p></p>
-            <button @click="tonen = 4; indienen()" :disabled="!stat.oudereOpname.okay">Indienen</button>
+            <button @click="tonen = 4; indienen()" :disabled="!stat.oudere_opname.okay">Indienen</button>
         </article>
         <article x-cloak x-show="tonen === 4">
             <p x-show="!resp">
-                Aan het verzenden...
+                Aan het verzenden... Even geduld. Nog niet afsluiten, a.u.b.
             </p>
             <p x-show="resp && okay">
                 Uw inzending is goed geregistreerd. Nogmaals bedankt om deel te nemen.
@@ -288,7 +308,7 @@
             <img src="HOGENT_Logo_Pos_rgb.png" alt="HOGENT">
         </a>
         <p></p>
-        <a href="mailto:bachelorproef@arnegovaerts.be">bachelorproef@arnegovaerts.be</a>
+        <a href="mailto:arne.govaerts@student.hogent.be">arne.govaerts@student.hogent.be</a>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5.min.js"></script>
