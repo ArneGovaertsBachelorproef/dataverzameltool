@@ -26,7 +26,7 @@ Als laatstejaarsstudent toegepaste informatica aan HOGENT ben ik momenteel bezig
 Concreet ga ik na of het mogelijk is om (automatisch) verschillen te detecteren in spraak tussen leeftijdsgenoten onderling
 en naar ouderen toe.
 
-Om dit te doen, heb ik uiteraard data nodig. U kan daar bij helpen. Het enige dat u hoeft te doen is enkele korte vragen
+Om dit te doen, heb ik uiteraard data nodig. U kan daarbij helpen. Het enige dat u hoeft te doen is enkele korte vragen
 beantwoorden en een korte tekst inspreken. De lengte bepaalt u volledig zelf. Hier geldt wel hoe langer, hoe beter.
 
 De tool vindt u hier terug: https://arnegovaerts.be
