@@ -34,4 +34,5 @@ Vragen of opmerkingen? U kan mij steeds contacteren op arne.govaerts@student.hog
 
 Alvast bedankt!
 
-Arne
+Met vriendelijke groeten
+Arne Govaerts
