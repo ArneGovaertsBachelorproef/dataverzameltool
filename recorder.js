@@ -27,7 +27,7 @@ if (navigator.mediaDevices.getUserMedia === undefined) {
 
 const recordAudio = () =>
     new Promise(async resolve => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         const mediaRecorder = new MediaRecorder(stream);
         const audioChunks = [];
 
